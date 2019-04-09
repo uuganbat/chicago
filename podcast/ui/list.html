@@ -1,0 +1,163 @@
+{% extends base_template %}
+{% load static i18n %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/new-style.css' %}">
+{% endblock %}
+
+
+{% block navbar %}navbar navbar-warning navbar-transparent navbar-fixed-top navbar-color-on-scroll{% endblock %}
+{% block page %}home-page{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+  <div class="page-header header-filter header-small" style="background-image: url('{% static 'img/bg.jpg' %}');">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1 text-center">
+          <div class="brand">
+            <h1><b class="font-slab">{% trans 'Podcast' %}</b></h1>
+            <h3 class="font-slab">{% trans 'Таны мэдлэгийн санд' %}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="main main-raised">
+    <div class="container">
+      {% include 'podcast/ui/podcast.html' %}
+      <div class="section">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="text-center">
+              <button id="loadmore" class="btn btn-warning">{% trans 'load more' %}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'app/ui/footer.html' %}
+{% endblock %}
+
+
+{% block extrajs %}
+<style type="text/css">
+  audio {
+    width: 100%;
+    margin-top: 10px;
+    padding: 0;
+  }
+  
+  audio::-webkit-media-controls-panel{
+    background-color: #FFFFFF;
+  }
+
+  audio::-webkit-media-controls-mute-button{
+
+  }
+
+  audio::-webkit-media-controls-play-button{
+
+  }
+
+  audio::-webkit-media-controls-timeline-container{
+
+  }
+
+  audio::-webkit-media-controls-current-time-display{
+
+  }
+
+  audio::-webkit-media-controls-time-remaining-display{
+
+  }
+
+  audio::-webkit-media-controls-timeline{
+
+  }
+
+  audio::-webkit-media-controls-volume-slider-container{
+
+  }
+
+  audio::-webkit-media-controls-volume-slider{
+
+  }
+
+  audio::-webkit-media-controls-seek-back-button{
+
+  }
+
+  audio::-webkit-media-controls-seek-forward-button{
+
+  }
+
+  audio::-webkit-media-controls-fullscreen-button{
+
+  }
+
+  audio::-webkit-media-controls-rewind-button{
+
+  }
+
+  audio::-webkit-media-controls-return-to-realtime-button{
+
+  }
+
+  audio::-webkit-media-controls-toggle-closed-captions-button{
+
+  }
+</style>
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    $('#loadmore').click(function(){
+      loadItems();
+    });
+
+    {% if not page_obj.has_next %}
+    $( "#loadmore" ).hide();
+    {% endif %}
+  });
+
+  var pageNum = 1;
+  var counter = 3;
+  var hasNextPage = true;
+
+  var loadItems = function() {
+
+    if (hasNextPage === false) {
+      return false
+    }
+
+    pageNum = pageNum + 1;
+
+    $.ajax({
+      url : '',
+      data : {page : pageNum},
+      //dataType : 'json',
+      success : function(data){
+        hasNextPage = true;
+        $('#newItems').append(data);
+
+      },
+      error : function(data) {
+        hasNextPage = false;
+      },
+    });
+  };
+
+  $(function(){
+    var pgurl = window.location.pathname;
+    $("#nav-pills li a").each(function(){
+      var href = $(this).attr('href');
+      if(href == pgurl){
+        $(this).parents('li').addClass("active").siblings().removeClass('active');
+      }
+    });
+  });
+
+</script>
+{% endblock %}

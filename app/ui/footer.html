@@ -1,0 +1,46 @@
+{% load i18n %}
+
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="pull-left center">
+          <li>
+            <a href="#">
+              {% trans 'About us' %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'app-contact' %}">
+              {% trans 'Contact us' %}
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <ul class="social-buttons pull-right center">
+          <li>
+            <a href="https://www.facebook.com/MongolsChicago-273178643125472/" target="_blank" class="btn btn-just-icon btn-facebook btn-simple">
+              <i class="fa fa-facebook-square"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/MongolsChicago" target="_blank" class="btn btn-just-icon btn-twitter btn-simple">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://plus.google.com/101631032619205407914" target="_blank" class="btn btn-just-icon btn-google btn-simple">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.youtube.com/channel/UClcudh0gUWLL33UzH6WRVkw" target="_blank" class="btn btn-just-icon btn-youtube btn-simple">
+              <i class="fa fa-youtube-play"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

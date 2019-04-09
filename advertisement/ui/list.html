@@ -1,0 +1,153 @@
+{% extends base_template %}
+{% load static i18n %}
+
+{% block page %}section-white{% endblock %}
+
+{% block navbar %}navbar navbar-white navbar-fixed-top{% endblock %}
+
+{% block content %}
+<div class="space-110"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4 text-center">
+      <ul id="nav-pills" class="nav nav-pills nav-pills-primary">
+        <li class="active">
+          <a href="{% url 'advertisement-list' %}">{% trans 'All' %}</a>
+        </li>
+        {% for category in ads_categorys %}
+        <li>
+          <a href="{% url 'advertisement-list' category.slug %}">{{ category.category }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div id="newItems" class="container">
+          {% if object_list.exists %}
+          {% for object in object_list %}
+          <div class="col-md-3">
+            <div class="space-20"></div>
+            <a href="{% url 'advertisement-detail' object.id %}">
+              <div class="card card-1">
+
+                {% if object.advertisementimage_set.first %}
+                <div class="card-image">
+                  <img class="img img-raised" style="width: 100%; height: 200px;" src="{{ object.advertisementimage_set.first.image.url }}"/>
+                </div>
+                {% else %}
+                <div class="card-image">
+                  <img class="img img-raised" style="width: 100%; height: 200px;" src="{% static 'img/no-image.png' %}"/>
+                </div>
+                {% endif %}
+
+                <div class="content" style="height: 70px;">
+                  <p class="card-title text-left">{{ object.title }}</p>
+                </div>
+                <div class="card-footer">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="pull-left">
+                        <p>
+                          {% if object.created_by.profile %}
+                          <img class="profile-img img-circle" src="{{ object.created_by.profile.profile_img }}"> 
+                          {% else %}
+                          <img class="profile-img img-circle" src="{% static 'img/default-avatar.png' %}"> 
+                          {% endif %}
+                          {{ object.created_by }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="pull-right text-center">
+                        <i class="fa fa-calendar"></i> {{ object.created_at }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="space-50"></div>
+          <h3 class="text-center">{% trans 'No advertisement' %}</h3>
+          <div class="space-50"></div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="space-50"></div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-center">
+            <button id="loadmore" class="btn btn-white">{% trans 'load more' %}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'app/ui/footer.html' %}
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  $('#carousel-example-generic').carousel()
+</script>
+
+<script type="text/javascript">
+
+  $(document).ready(function(){
+
+    $('#loadmore').click(function(){
+      loadItems();
+    });
+
+    {% if not page_obj.has_next %}
+    $( "#loadmore" ).hide();
+    {% endif %}
+
+  });
+
+  var pageNum = 1;
+  var counter = 3;
+  var hasNextPage = true;
+
+  var loadItems = function() {
+
+    if (hasNextPage === false) {
+      return false
+    }
+
+    pageNum = pageNum + 1;
+
+    $.ajax({
+      url : '',
+      data : {page : pageNum},
+      //dataType : 'json',
+      success : function(data){
+        hasNextPage = true;
+        $('#newItems').append(data);
+
+      },
+      error : function(data) {
+        hasNextPage = false;
+      },
+    });
+  };
+
+  $(function(){
+    var pgurl = window.location.pathname;
+    $("#nav-pills li a").each(function(){
+      var href = $(this).attr('href');
+      if(href == pgurl){
+        $(this).parents('li').addClass("active").siblings().removeClass('active');
+      }
+    });
+  });
+</script>
+
+
+{% endblock %}

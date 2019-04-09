@@ -1,0 +1,114 @@
+{% load static i18n humanize %}
+
+<div class="section section-comments">
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="media-area">
+        {% if comments.exists %}
+        <h3 class="title text-center">{% trans 'Comments' %}</h3>
+        {% endif %}
+        {% for comment in comments %}
+        <div class="media">
+          <a class="pull-left" href="{% url 'authenticate-profile' comment.user.profile.id %}">
+            <div class="avatar">
+              <img class="media-object" src="{{ comment.user.profile.profile_img }}" alt="..."/>
+            </div>
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading">{{ comment.user }} <small>&middot; {{ comment.created_at|naturaltime }}</small></h4>
+            <h6 class="text-muted"></h6>
+
+            <p>{{ comment.text }}</p>
+
+            <div class="media-footer">
+              <button id="button_{{ comment.id }}" class="btn btn-primary btn-simple pull-right" rel="tooltip" title="{% trans 'Reply to Comment' %}">
+                <i class="material-icons">reply</i> {% trans 'Reply' %}
+              </button>
+            </div>
+            <div id="reply_{{ comment.id }}" class="media media-post" style="display: none;">
+              <a class="pull-left author" href="{% if user.is_authenticated %}{% url 'authenticate-profile' user.profile.id %}{% else %}javascript:;{% endif %}">
+                <div class="avatar">
+                  {% if user.is_authenticated %}
+                  <img class="media-object" alt="64x64" src="{{ user.profile.profile_img }}">
+                  {% else %}
+                  <img class="media-object" alt="64x64" src="{% static 'img/default-avatar.png' %}">
+                  {% endif %}
+                </div>
+              </a>
+              <div class="media-body">
+                <form action="{% url 'article-reply' comment.id %}" method="post">{% csrf_token %}
+                  <textarea class="form-control" name="text" placeholder="{% trans 'Post your comment' %}..." rows="6"></textarea>
+                  <div class="media-footer">
+                    {% if user.is_authenticated %}
+                    <button type="submit" class="btn btn-primary btn-round btn-wd pull-right">
+                      {% trans 'Post your comment' %}
+                    </button>
+                    {% else %}
+                    <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn btn-primary btn-round btn-wd pull-right">
+                      {% trans 'Post your comment' %}
+                    </a>
+                    {% endif %}
+                  </div>
+                </form>
+              </div>
+            </div>
+            {% for reply in comment.get_all_replys %}
+            <div class="media">
+              <a class="pull-left" href="{% url 'authenticate-profile' comment.user.profile.id %}">
+                <div class="avatar">
+                  <img class="media-object" alt="64x64" src="{{ reply.user.profile.profile_img }}">
+                </div>
+              </a>
+              <div class="media-body">
+                <h4 class="media-heading">{{ reply.user }} <small>&middot; {{ reply.created_at|naturaltime }}</small></h4>
+                <p>{{ reply.text }}</p>
+                <div class="space-50"></div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% empty %}
+        {% endfor %}
+      </div>
+      <h3 class="title text-center">{% trans 'Post your comment' %}</h3>
+      <div class="media media-post">
+        <a class="pull-left author" href="{% if user.is_authenticated %}{% url 'authenticate-profile' user.profile.id %}{% else %}javascript:;{% endif %}">
+          <div class="avatar">
+            {% if user.is_authenticated %}
+            <img class="media-object" alt="64x64" src="{{ user.profile.profile_img }}">
+            {% else %}
+            <img class="media-object" alt="64x64" src="{% static 'img/default-avatar.png' %}">
+            {% endif %}
+          </div>
+        </a>
+        <div class="media-body">
+          <form id="comment-form" action="{% url 'article-comment' object.id %}" method="post">{% csrf_token %}
+            <textarea class="form-control" name="text" placeholder="{% trans 'Post your comment' %}..." rows="6"></textarea>
+            <div class="media-footer">
+              {% if user.is_authenticated %}
+              <button type="submit" class="btn btn-primary btn-round btn-wd pull-right">
+                {% trans 'Post your comment' %}
+              </button>
+              {% else %}
+              <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn btn-primary btn-round btn-wd pull-right">
+                {% trans 'Post your comment' %}
+              </a>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $.material.init();
+  });
+  {% for comment in comments %}
+  $('#button_{{ comment.id }}').click(function(){
+    $('#reply_{{ comment.id }}').show();
+  });
+  {% endfor %}
+</script>

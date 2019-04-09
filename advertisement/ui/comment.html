@@ -1,0 +1,89 @@
+{% load humanize i18n static %}
+
+<div id="media" class="media-area">
+  {% if object.comment_set.all.exists %}
+  <h3 class="title text-center">{% trans 'Comment' %}</h3>
+  {% endif %}
+  {% for comment in object.comment_set.all %}
+  <div class="media">
+    <a class="pull-left" href="{% url 'authenticate-profile' comment.user.profile.id %}">
+      <div class="avatar">
+        <img class="media-object" src="{{ comment.user.profile.profile_img }}" alt="..."/>
+      </div>
+    </a>
+    <div class="media-body">
+      <h4 class="media-heading">{{ comment.user }} <small>&middot; {{ comment.created_at|naturaltime }}</small></h4>
+      <h6 class="text-muted"></h6>
+
+      <p>{{ comment.text }}</p>
+
+      <div class="media-footer">
+        <button id="reply_{{ comment.id }}" class="btn btn-primary btn-simple pull-right" rel="tooltip" title="{% trans 'Reply to Comment' %}">
+          <i class="material-icons">reply</i> {% trans 'Reply' %}
+        </button>
+      </div>
+      <div id="post_{{ comment.id }}" class="media media-post" style="display: none;">
+        <a class="pull-left author" href="#pablo">
+          <div class="avatar">
+            {% if user.is_authenticated %}
+            <img class="media-object" alt="64x64" src="{{ user.profile.profile_img }}">
+            {% else %}
+            <img class="media-object" alt="64x64" src="{% static 'img/default-avatar.png' %}">
+            {% endif %}
+          </div>
+        </a>
+        <div class="media-body">
+          <form action="{% url 'advertisement-reply' comment.id %}" id="reply-form-{{ comment.id }}" method="post">
+            {% csrf_token %}
+            <textarea class="form-control" name="reply" placeholder="{% trans 'Post your comment' %}" rows="6"></textarea>
+            <div class="media-footer">
+              <button class="btn btn-primary btn-round btn-wd pull-right">{% trans 'Post your comment' %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% for reply in comment.reply_set.all %}
+      <div class="media">
+        <a class="pull-left" href="{% url 'authenticate-profile' comment.user.profile.id %}">
+          <div class="avatar">
+            <img class="media-object" alt="64x64" src="{{ reply.user.profile.profile_img }}">
+          </div>
+        </a>
+        <div class="media-body">
+          <h4 class="media-heading">{{ reply.user }} <small>&middot; {{ reply.created_at|naturaltime }}</small></h4>
+          <p>{{ reply.text }}</p>
+          <div class="space-40"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $.material.init();
+
+    {% for comment in object.comment_set.all %}
+    $(document).on('click', '#reply_{{ comment.id }}', function(){
+      $('#post_{{ comment.id }}').show();
+    });
+
+    $('#reply-form-{{ comment.id }}').submit(function(e){
+      e.preventDefault();
+      $.ajax({
+        type: $(this).attr('method'),
+        url: $(this).attr('action'),
+        data: $(this).serialize(),
+        success: function(data)
+        {
+          $('#media').html(data);
+          $('[name="comment"]').val(null);
+      }
+    });
+    });
+    {% endfor %}
+
+  })
+</script>

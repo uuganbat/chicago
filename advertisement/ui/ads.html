@@ -1,0 +1,56 @@
+{% load static i18n %}
+{% if object_list %}
+{% for object in object_list %}
+<a href="{% url 'advertisement-detail' object.id %}">
+  <div class="col-md-3" style="margin-top: 20px;">
+    <div class="card card-1">
+
+      {% if object.advertisementimage_set.first %}
+      <div class="card-image">
+        <img class="img img-raised" style="width: 100%; height: 200px;" src="{{ object.advertisementimage_set.first.image.url }}"/>
+      </div>
+      {% else %}
+      <div class="card-image">
+        <img class="img img-raised" style="width: 100%; height: 200px;" src="{% static 'img/no-image.png' %}"/>
+      </div>
+      {% endif %}
+
+      <div class="content" style="height: 60px;">
+        <p class="card-title text-left">{{ object.title }}</p>
+      </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="pull-left">
+              <p>
+                {% if object.created_by.profile %}
+                <img class="profile-img img-circle" src="{{ object.created_by.profile.profile_img }}"> 
+                {% else %}
+                <img class="profile-img img-circle" src="{% static 'img/default-avatar.png' %}"> 
+                {% endif %}
+                {{ object.created_by }}
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="pull-right">
+              <i class="fa fa-calendar"></i> {{ object.created_at }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</a>
+{% endfor %}
+{% else %}
+<div class="space-50"></div>
+<h3>{% trans 'No advertisement' %}</h3>
+<div class="space-50"></div>
+{% endif %}
+
+{% if not page_obj.has_next %}
+<script type="text/javascript">
+  $( "#loadmore" ).hide();
+</script>
+{% endif %}

@@ -1,0 +1,312 @@
+{% extends base_template %}
+{% load static i18n app_extras humanize %}
+
+{% block page %}section-white{% endblock %}
+{% block navbar %}navbar navbar-white navbar-fixed-top{% endblock %}
+
+
+{% block content %}
+<div class="space-20"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="section">
+        <div class="row">
+          <div class="col-md-12">
+            <h3><b>"{{ object.title }}"</b></h3>
+          </div>
+        </div><hr>
+        <div class="row">
+          <div class="col-md-10">
+            <div class="space-20"></div>
+            <div class="pull-left">
+              <a href="{% url 'authenticate-profile' object.created_by.profile.id %}">
+                {% if object.created_by.profile %}
+                <img class="profile-img img-circle" src="{{ object.created_by.profile.profile_img }}">
+                {% else %}
+                <img class="profile-img img-circle" src="{% static 'img/default-avatar.png' %}"> 
+                {% endif %}
+              </a>
+              {{ object.created_by }}&nbsp;&nbsp;&nbsp;
+              <i class="fa fa-calendar"></i>
+              {{ object.created_at }}&nbsp;&nbsp;&nbsp;
+              <i class="fa fa-eye"></i>
+              {{ object.view }}
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="pull-right">
+              {% if object.created_by == user %}
+              <button data-url="{% url 'advertisement-update' object.id %}" class="btn btn-primary load">
+                <i class="material-icons">create</i> {% trans 'Change' %}
+              </button>
+              {% elif is_not_saved %}
+              <a href="{% url 'advertisement-remove' object.id %}" class="btn btn-danger">
+                <i class="material-icons">delete</i> {% trans 'Remove' %} {{ is_saved }}
+              </a>
+              {% else %}
+              <a href="{% url 'advertisement-save' object.id %}" class="btn btn-success">
+                <i class="material-icons">save</i> {% trans 'Save' %}
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div><hr>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <!-- Carousel Card -->
+            <div class="card card-raised card-carousel">
+              <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                <div class="carousel slide" data-ride="carousel">
+
+                  <!-- Indicators -->
+                  <ol class="carousel-indicators">
+                    {% for img in object.advertisementimage_set.all %}
+                    <li data-target="#carousel-example-generic" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+                    {% endfor %}
+                  </ol>
+
+                  <!-- Wrapper for slides -->
+                  <div class="carousel-inner">
+                    {% for img in object.advertisementimage_set.all %}
+                    <div class="item {% if forloop.first %}active{% endif %}">
+                      <img style="width: 100%; height: 400px;" src="{{ img.image.url }}" alt="Awesome Image">
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <!-- Controls -->
+                  <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                    <i class="material-icons">keyboard_arrow_left</i>
+                  </a>
+                  <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                    <i class="material-icons">keyboard_arrow_right</i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="space-20"></div>
+        <div class="row">
+          <div class="col-md-12">
+            <p>{{ object.body|safe }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="space-20"></div>
+            <div class="blog-tags">
+              Ангилал: 
+              <span class="label label-primary">{{ object.category }}</span>
+              <span class="label label-primary">{{ object.sub_category }}</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            {% post_to_gplus request.get_full_path "Post" %}
+            {% post_to_twitter "New Song: {{object.title}}. Check it out!" request.get_full_path "tweet" %}
+            {% post_to_facebook request.get_full_path "share" %}
+          </div>
+        </div>
+        <hr />    
+        <div class="row">
+          <div class="col-md-5">
+            <div class="pull-left">
+              <a href="{% if user.is_authenticated %}{% url 'authenticate-profile' object.created_by.profile.id %}{% else %}javascript:;{% endif %}">
+                {% if object.created_by.profile %}
+                <img class="profile-img img-circle" src="{{ object.created_by.profile.profile_img }}">
+                {% else %}
+                <img class="profile-img img-circle" src="{% static 'img/default-avatar.png' %}"> 
+                {% endif %}
+              </a>
+              {{ object.created_by }}
+            </div>
+          </div>
+          <div class="col-md-7">
+            <div class="pull-right">
+              <i class="fa fa-calendar"></i> {{ object.created_at }}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if object_list.exists %}
+      <div class="section">
+        <div class="row">
+          <div class="col-md-12">
+            <h3 class="title text-center">Холбоотой зар</h3>
+            {% for object in object_list %}
+            <a href="{% url 'advertisement-detail' object.id %}">
+              <div class="col-md-4">
+                <div class="space-20"></div>
+                <div class="card card-1">
+                  <div class="card-image">
+                    <img class="img img-raised" style="width: 100%; height: 120px;" src="{% if object.advertisementimage_set.first %}{{ object.advertisementimage_set.first.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}"/>
+                  </div>
+
+                  <div class="content" style="height: 70px;">
+                    <h4 class="card-title">
+                      <p style="font-size: 12px;">{{ object.title }}</p>
+                    </h4>
+                  </div>
+                  <div class="card-footer">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="pull-left">
+                          <p style="font-size: 12px;">
+
+                            <img class="ads-profile-img img-circle" src="{% if object.create_by.profile %}{{ object.created_by.profile.profile_img }}{% else %}{% static 'img/default-avatar.png' %}{% endif %}">                          
+                            {{ object.created_by }}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="pull-right text-center" style="font-size: 12px;">
+                          <i class="fa fa-calendar"></i> {{ object.created_at }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <hr />
+      {% endif %}
+      <div class="section">
+        <div class="row">
+          <div class="col-md-12">
+            {% include 'advertisement/ui/comment.html' %}
+            <div class="media media-post">
+              <a class="pull-left author" href="{% if user.is_authenticated %}{% url 'authenticate-profile' user.profile.id %}{% else %}javascript:;{% endif %}">
+                <div class="avatar">
+                  {% if user.is_authenticated %}
+                  <img class="media-object" alt="64x64" src="{{ user.profile.profile_img }}">
+                  {% else %}
+                  <img class="media-object" alt="64x64" src="{% static 'img/default-avatar.png' %}">
+                  {% endif %}
+                </div>
+              </a>
+              <div class="media-body">
+                <form action="{% url 'advertisement-comment' object.id %}" id="comment-form" method="post">{% csrf_token %}
+                  <textarea class="form-control" id="id-comment" name="comment" placeholder="{% trans 'Post your comment' %}..." rows="6"></textarea>
+                  <div class="media-footer">
+                    <button class="btn btn-primary btn-round btn-wd pull-right">{% trans 'Post your comment' %}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="section">
+        <h6>ЭРЭЛТТЭЙ ЗАР</h6>
+        {% for object in max_objects %}
+        <div class="space-20"></div>
+        <div class="row">
+          <div class="col-md-12">
+            <a href="{% url 'advertisement-detail' object.id %}">
+              <div class="card card-1">
+                <div class="row">
+                  <div class="col-md-6">
+
+                    <div class="card-image">
+                      <img class="img img-raised" style="width: 100%; height: 120px;" src="{% if object.advertisementimage_set.first %}{{ object.advertisementimage_set.first.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}"/>
+                    </div>
+
+                  </div>
+                  <div class="col-md-6" style="padding: 0 ! important;">
+                    <div class="content">
+                      <h4 class="card-title" style="margin: 0 !important;">
+                        <p style="font-size: 12px;">{{ object.title }}</p>
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="space-20"></div>
+      <div class="fixed-banner">
+        <div class="banner">
+          <h6>Сурталчилгаа</h6>
+          <div class="banner-main">
+            <a href="https://www.facebook.com/westerosenglish/" target="_blank">
+              <img src="{% static 'img/westeros.png' %}" width="400" height="400" alt="Сурталчилгаа">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'app/ui/footer.html' %}
+
+<!-- Modal Core -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body" style="padding: 0;">
+        <img width="100%" height="500" src="{% static 'img/westeros.png' %}">
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  $('#comment-form').submit(function(e){
+    e.preventDefault();
+    $.ajax({
+      type: $(this).attr('method'),
+      url: $(this).attr('action'),
+      data: $(this).serialize(),
+      success: function(data)
+      {
+        $('#media').html(data);
+        $('#id-comment').val(null);
+      }
+    });
+  });
+  $(document).ready(function(){
+
+    var bool = true;
+    $(window).scroll(function(){
+      if ($(window).scrollTop() > 400 && bool == true){
+        $('#myModal').modal('show');
+        bool = false;
+      }
+    });
+
+    $(window).scroll(function(){
+
+      if ($(window).scrollTop() > 750){
+        $('.fixed-banner').addClass('fixed');
+      }
+      else {
+        $('.fixed-banner').removeClass('fixed');
+      }
+
+    });
+  });
+
+</script>
+<style type="text/css">
+  @media screen and (min-width: 414px) {
+    .fixed-banner.fixed .banner{
+      position: fixed;
+      top: 100px;
+    }
+  }
+</style>
+{% endblock %}

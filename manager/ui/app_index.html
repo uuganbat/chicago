@@ -1,0 +1,26 @@
+{% extends manager_base_template %}
+{% load static i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar-wrapper">
+  <ul class="nav">
+    <li>
+      <a href="{% url 'manager:index' %}">
+        <i class="material-icons">dashboard</i>
+        <p>Хянах самбар</p>
+      </a>
+    </li>
+    {% for app in app_lists %}
+    <li class="{% if app.app_label == app_label %}active{% endif %}">
+      <a href="{{ app.app_url }}">
+        {{ app.icon }}
+        <p>{{ app.name }}</p>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
+

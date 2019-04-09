@@ -1,0 +1,108 @@
+{% extends base_template %}
+{% load static i18n humanize %}
+{% load app_extras %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/new-style.css' %}">
+{% endblock %}
+
+{% block navbar %}navbar navbar-danger navbar-transparent navbar-fixed-top navbar-color-on-scroll{% endblock %}
+{% block page %}blog-post{% endblock %}
+{% block search %}{% endblock %}
+
+
+{% block content %}
+<div class="page-header header-filter header-small" data-parallax="active" style="background-image: url('{{ object.image  }}');">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2 text-center">
+        <div class="brand">
+          <h2 class="font-slab"><b>{{ object.title|upper }}</b></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="main main-raised">
+  <div class="container">
+    <div class="section section-text">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          {% autoescape off %}
+          {{ object.body }}
+          {% endautoescape %}
+        </div>
+      </div>
+    </div>
+
+    <div class="section section-blog-info">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="blog-tags">
+                Ангилал: <span class="label label-primary">{{ object.category }}</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              {% post_to_gplus request.get_full_path "Post" %}
+              {% post_to_twitter "New Song: {{object.title}}. Check it out!" request.get_full_path "tweet" %}
+              {% post_to_facebook request.get_full_path "share" %}
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="card card-profile card-plain">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="card-avatar">
+                  <a href="{% url 'authenticate-profile' object.created_by.profile.id %}">
+                    <img class="img" src="{{ object.created_by.profile.profile_img }}">
+                  </a>
+                  <div class="ripple-container"></div></div>
+                </div>
+                <div class="col-md-6">
+                  <h4 class="card-title">{{ object.created_by.get_full_name }}</h4>
+                  <p class="description">{{ object.created_by.profile.about_me }}</p>
+                </div>
+                <div class="col-md-4">
+                  <div class="pull-right">
+                    <p class="card-title">
+                      <span class="text-warning"><i class="fa fa-eye"></i> {{ count }}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <span><i class="fa fa-calendar"> {{ object.created_at }}</i></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="comment">
+        {% include 'articles/ui/comment.html' %}
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'app/ui/footer.html' %}
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).on('submit', 'form', function(e){
+    e.preventDefault();
+    $.ajax({
+      type: $(this).attr('method'),
+      url: $(this).attr('action'),
+      data: $(this).serialize(),
+      success: function(data)
+      {
+        $('#comment').html(data);
+        $('#id-comment').val(null);
+      }
+    });
+  });
+</script>
+{% endblock %}

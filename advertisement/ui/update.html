@@ -1,0 +1,72 @@
+{% load i18n static %}
+
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+    <i class="material-icons">clear</i>
+  </button>
+  <h4 class="modal-title">{% trans 'Change ads' %}</h4>
+</div>
+<form action="{{ request.path }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group label-floating {% if f.errors %}has-error{% endif %}">
+          {{ form.category }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group label-floating {% if f.errors %}has-error{% endif %}">
+          {{ form.sub_category }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group label-floating {% if form.title.errors %}has-error{% endif %}">
+      {% if form.title.errors %}
+      <label class="control-label">{{ form.title.errors.as_text }}</label>
+      {% else %}
+      <label class="control-label">{{ form.title.label }}</label>
+      {% endif %}
+      {{ form.title }}
+    </div>
+    <div class="form-group label-floating {% if form.body.errors %}has-error{% endif %}">
+      {% if form.body.errors %}
+      <label class="control-label">{{ form.body.errors.as_text }}</label>
+      {% endif %}
+      {{ form.body }}
+    </div>
+    {{ advertisement_formset.management_form }}
+    {{ advertisement_formset.non_form_errors }}
+    {% for form in advertisement_formset %}
+    <div class="col-sm-4">
+      {{ form.id }}
+      <div class="form-group label-floating">
+        <input type="file" name="{{ form.image.html_name }}">
+        <label class="control-label">{% trans 'Image' %}</label>
+        <div class="input-group">
+          <input type="text" readonly class="form-control" value="{{ form.image.value|default:'' }}">
+        </div>
+      </div>
+      {% if form.image.value %}
+      <div class="checkbox">
+        <label>
+          <input name="{{ form.DELETE.html_name }}" type="checkbox" />
+          {% trans 'Delete' %}
+        </label>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">{% trans 'Close' %}</button>
+    <button type="submit" class="btn btn-success btn-simple">{% trans 'Save' %}</button>
+  </div>
+</form>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $.material.init();
+    $('#id_body').redactor();
+  })
+</script>

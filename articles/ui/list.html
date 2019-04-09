@@ -1,0 +1,91 @@
+{% extends base_template %}
+{% load static i18n %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/new-style.css' %}">
+{% endblock %}
+
+{% block navbar %}navbar navbar-danger navbar-transparent navbar-fixed-top navbar-color-on-scroll{% endblock %}
+{% block page %}home-page{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+  <div class="page-header header-filter header-small" data-parallax="active" style="background-image: url('{% static 'img/bg.jpg' %}');">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1 text-center">
+          <div class="brand">
+            <h1><b class="font-slab">{% trans 'Articles' %}</b></h1>
+            <h3 class="font-slab">{% trans 'Таны мэдлэгийн санд' %}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main main-raised">
+    <div class="container">
+      <div class="section">
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4 text-center">
+            <ul id="nav-pills" class="nav nav-pills nav-pills-danger">
+              <li class="active">
+                <a href="{% url 'articles-list' %}">{% trans 'All' %}</a>
+              </li>
+              {% for category in article_categorys %}
+              <li class="">
+                <a href="{% url 'articles-list' category.slug %}">{{ category.category }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="row">
+          {% for object in object_list %}
+          <div class="col-md-{% if object_list|length == 1 %}12{% else %}{% cycle 6 6 12 %}{% endif %}">
+            <div id="test" class="card card-raised card-background" style="background-image: url('{{ object.image  }}')">
+              <div class="content">
+                <h6 class="category text-info">{{ object.category }}</h6>
+                <a href="{% url 'articles-detail' object.id %}">
+                  <h4 class="card-title">{{ object.title|truncatechars:"35" }}</h4>
+                </a>
+                <p class="card-description">
+                  {{ object.body|striptags|truncatechars:200 }}
+                </p>
+                <a href="{% url 'articles-detail' object.id %}" class="btn btn-{% cycle 'warning' 'primary' 'info' 'success' %} btn-round">
+                  <i class="material-icons">format_align_left</i> {% trans 'Read article' %}
+                </a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-md-12">
+            <div class="text-center">
+              <h1>{% trans 'Coming soon...' %}</h1>
+            </div>
+          </div>
+          <div class="space"></div>
+          <div class="space"></div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'app/ui/footer.html' %}
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+  $(function(){
+    var pgurl = window.location.pathname;
+    $("#nav-pills li a").each(function(){
+      var href = $(this).attr('href');
+      if(href == pgurl){
+        $(this).parents('li').addClass("active").siblings().removeClass('active');
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,319 @@
+{% load static i18n %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/apple-icon.png">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>{% block title %}MongolsChicago{% endblock %}</title>
+  
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
+  {% block css %}
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+
+  {% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/material-kit.css' %}">
+  {% endblock %}
+
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="{% static 'css/demo.css' %}" rel="stylesheet" />
+
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+
+  <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-barber-shop.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-big-counter.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-bounce.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-center-atom.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-center-circle.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-center-radar.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-center-simple.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-corner-indicator.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-fill-left.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-flash.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-flat-top.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-loading-bar.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-mac-osx.css' %}" /-->
+  <!--link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-material.css' %}" /-->
+  <link rel="stylesheet" href="{% static 'pace-master/themes/black/pace-theme-minimal.css' %}" />
+  
+  <style type="text/css">
+    .font-slab {
+      font-family: 'Roboto Slab', serif;
+    }
+    #myloader {
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      z-index: 1999;
+      background: white;
+      text-align: center;
+    }
+
+    #myloader .loader {
+      display: inline-block;
+      height: auto;
+      position: relative;
+      top: 40%;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+
+    #myloader .loader img {
+      max-width: 100px;
+    }
+  </style>
+  
+  {% endblock %}
+</head>
+
+<body id="Demo" class="{% block page %}landing-page{% endblock %}">
+  {% block header %}
+  <nav id="topnavbar" class="{% block navbar %}navbar navbar-white navbar-transparent navbar-fixed-top navbar-color-on-scroll{% endblock %}">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand font-slab" href="{% url 'app-home' %}">
+          MongolsChicago <i class="material-icons">all_inclusive</i>
+        </a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navigation-example">
+        {% block search %}
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group  is-empty">
+            <input type="text" class="form-control" name="search" placeholder="{% trans 'Search' %}">
+            <span class="material-input"></span>
+          </div>
+          <button type="submit" class="btn btn-white btn-round btn-just-icon">
+            <i class="material-icons">search</i><div class="ripple-container"></div>
+          </button>
+        </form>
+        {% endblock %}
+        <ul class="nav navbar-nav navbar-right">
+          {% block navbar-items %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              {% trans 'Advertisement' %}
+              <b class="caret"></b>
+              <div class="ripple-container"></div>
+            </a>
+            <ul class="dropdown-menu dropdown-with-icons">
+              <li>
+                <a href="{% url 'advertisement-list' %}">
+                  <i class="material-icons">view_carousel</i>&nbsp; {% trans 'All' %}
+                </a>
+              </li>
+              {% for category in ads_categorys %}
+              <li>
+                <a href="{% url 'advertisement-list' category.slug %}">
+                  <i class="material-icons">{{ category.icon }}</i>&nbsp; {{ category.category }}
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li>
+            <a href="{% url 'articles-list' %}">
+              {% trans 'Articles' %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'podcast-list' %}">
+              {% trans 'Podcast' %}
+            </a>
+          </li>
+          {% endblock %}
+          {% if user.is_authenticated %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              {% if user.profile %}
+              <img class="profile-img img-circle" src="{{ user.profile.profile_img }}">
+              {% else %}
+              <img class="profile-img img-circle" src="{% static 'img/default-avatar.png' %}">
+              {% endif %}
+              {{ user.get_full_name }}
+              <b class="caret"></b>
+              <div class="ripple-container"></div>
+            </a>
+            <ul class="dropdown-menu dropdown-with-icons">
+              <li>
+                {% if profile_update %}
+                <a href="javascript:;" data-url="{% url 'authenticate-profile' user.profile.id %}" class="load">
+                  <i class="material-icons">account_circle</i>&nbsp; {% trans 'My profile' %}
+                </a>
+                {% else %}
+                <a href="{% url 'authenticate-profile' user.profile.id %}">
+                  <i class="material-icons">account_circle</i>&nbsp; {% trans 'My profile' %}
+                </a>
+                {% endif %}
+              </li>
+              <li>
+                <a href="{% url 'authenticate-profile' user.profile.id %}?type=my">
+                  <i class="material-icons">backup</i>&nbsp; {% trans 'My ads' %}
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'authenticate-profile' user.profile.id %}?type=saved">
+                  <i class="material-icons">save</i>&nbsp; {% trans 'Saved ads' %}
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'change-password' %}">
+                  <i class="material-icons">lock_outline</i>&nbsp; {% trans 'Change password' %}
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="{% url 'logout' %}">
+                  <i class="material-icons">exit_to_app</i>&nbsp; {% trans 'Log out' %}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            {% comment %}
+            <a href="{% url 'advertisement-create' %}" class="{% block ads %}btn btn-primary btn-round{% endblock %}">
+              <i class="material-icons">group</i>
+              {% trans 'Add ads' %}
+            </a>
+            {% endcomment %}
+            <button class="btn btn-primary btn-round load" data-url="{% url 'advertisement-create' %}">
+              <i class="material-icons">group</i>
+              {% trans 'Add ads' %}
+            </button>
+          </li>
+          {% else %}
+          <li>
+            <a href="{% url 'login' %}" class="{% block navbar-login %}{% endblock %}">
+              <i class="fa fa-sign-in"></i>
+              {% trans 'Log in' %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'authenticate-register' %}" class="{% block navbar-signup %}{% endblock %}">
+              <i class="material-icons">person_add</i>
+              {% trans 'Sign Up' %}
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  {% endblock %}
+  {% block content %}
+  {% endblock %}
+  <div class="modal fade" id="ModalGeneral" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            <i class="material-icons">clear</i>
+          </button>
+          <h4 class="modal-title">Modal title</h4>
+        </div>
+        <div class="modal-body">
+          <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-simple">Nice Button</button>
+          <button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+{% block js %}
+
+<!--   Core JS Files   -->
+<script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/material.min.js' %}"></script>
+
+<!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+<script src="{% static 'js/nouislider.min.js' %}" type="text/javascript"></script>
+
+<!--  Plugin for the Datepicker, full documentation here: http://www.eyecon.ro/bootstrap-datepicker/ -->
+<script src="{% static 'js/bootstrap-datepicker.js' %}" type="text/javascript"></script>
+
+<!-- Control Center for Material Kit: activating the ripples, parallax effects, scripts from the example pages etc -->
+<script src="{% static 'js/material-kit.js' %}" type="text/javascript"></script>
+
+<!-- Smart select -->
+<script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+<script src="{% static 'smart-selects/admin/js/chainedm2m.js' %}"></script>
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'redactor/redactor.min.css' %}">
+<script src="{% static 'redactor/jquery.redactor.init.js' %}"></script>
+<script src="{% static 'redactor/redactor.min.js' %}"></script>
+
+<script src="{% static 'js/bootstrap-notify.js' %}"></script>
+<script src="{% static 'js/extra.js' %}"></script>
+
+<script>
+
+  {% if messages %}
+  {% for message in messages %}
+
+  $.notify({
+    icon: '{% if message.tags == "success" %}check{% elif message.tags == "warning" %}<i class="material-icons">warning</i>{% else %}<i class="material-icons">info_outline</i>{% endif %}',
+    message: "{{ message }}",
+
+  },{
+    type: '{{ message.tags }}',
+    timer: 1000,
+    placement: {
+      from: 'top',
+      align: 'right',
+    }
+  });
+  {% endfor %}
+  {% endif %}
+
+  {% for error in form.non_field_errors %}
+  $.notify({
+    icon: 'error_outline',
+    message: "{{ error }}",
+
+  },{
+    type: 'danger',
+    timer: 1000,
+    placement: {
+      from: 'top',
+      align: 'right',
+    }
+  });
+  {% endfor %}
+
+</script>
+{% endblock %}
+
+
+{% block extrajs %}
+{% endblock %}
+</html>

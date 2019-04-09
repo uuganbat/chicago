@@ -1,0 +1,125 @@
+{% extends base_template %}
+{% load i18n static %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/new-style.css' %}">
+{% endblock %}
+
+{% block page %}section-white{% endblock %}
+{% block navbar %}navbar navbar-white navbar-fixed-top{% endblock %}
+{% block navbar-items %}{% endblock %}
+{% block search %}{% endblock %}
+
+{% block content %}
+<div id="myloader">
+  <span class="loader">
+    <img src="{% static 'img/owl.png' %}" style="display: block;" alt="logo">
+  </span>
+</div>
+<div class="space"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1 text-center">
+      {% comment %}
+      <h2 class="font-slab">
+        <b>MongolsChicago</b>
+        <i class="material-icons" style="font-size: 30px; font-weight: bold;">all_inclusive</i>
+      </h2>
+      {% endcomment %}
+      <h4 class="font-slab"><b>Proud to provide information and knowledge to our 4000+ fellow Mongolians<br> residing in the beautiful Windy City!<br> Our mission is to lead the path for successful future!</b></h4>
+      <div class="space-60"></div>
+      <div class="row">
+        <div class="col-md-4">
+          <a href="{% url 'articles-list' %}">
+            <div class="card card-1 card-pricing card-plain" style="border: 2px solid #eee;">
+              <div class="content">
+                <div class="icon icon-danger">
+                  <i class="fa fa-newspaper-o" style="border: 2px solid #f44336;"></i>
+                </div>
+                <div class="space-20"></div>
+                <h5 class="font-slab" style="color: #3C4858;">{% trans 'Articles' %}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-4">
+          <a href="{% url 'advertisement-list' %}">
+            <div class="card card-1 card-pricing card-plain" style="border: 2px solid #eee;">
+              <div class="content">
+                <div class="icon icon-primary">
+                  <i class="material-icons" style="border: 2px solid #9c27b0;">group</i>
+                </div>
+                <div class="space-20"></div>
+                <h5 class="font-slab" style="color: #3C4858;">{% trans 'Advertisement' %}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-4">
+          <a href="{% url 'podcast-list' %}">
+            <div class="card card-1 card-pricing card-plain" style="border: 2px solid #eee;">
+              <div class="content">
+                <div class="icon icon-warning">
+                  <i class="fa fa-podcast" style="border: 2px solid #fbc02d;"></i>
+                </div>
+                <div class="space-20"></div>
+                <h5 class="font-slab" style="color: #3C4858;">{% trans 'Podcast' %}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'app/ui/footer.html' %}
+{% endblock %}
+{% block extrajs %}
+<script src="{% static 'pace-master/pace.js' %}"></script>
+<script>
+
+  Pace.options = {
+    ajax: false
+  }
+
+  Pace.on("done", function(){
+    $("#myloader").fadeOut(800);
+
+    {% if messages %}
+    {% for message in messages %}
+
+    $.notify({
+      icon: '{% if message.tags == "success" %}check{% elif message.tags == "warning" %}<i class="material-icons">warning</i>{% else %}<i class="material-icons">info_outline</i>{% endif %}',
+      message: "{{ message }}",
+
+    },{
+      type: '{{ message.tags }}',
+      timer: 1000,
+      placement: {
+        from: 'top',
+        align: 'right',
+      }
+    });
+    {% endfor %}
+    {% endif %}
+
+    {% for error in form.non_field_errors %}
+    $.notify({
+      icon: 'error_outline',
+      message: "{{ error }}",
+
+    },{
+      type: 'danger',
+      timer: 1000,
+      placement: {
+        from: 'top',
+        align: 'right',
+      }
+    });
+    {% endfor %}
+
+  });
+</script>
+{% endblock %}

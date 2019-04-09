@@ -1,0 +1,152 @@
+{% extends base_template %}
+{% load static i18n %}
+
+{% block page %}profile-page{% endblock %}
+{% block search %}{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+  <div class="header header-filter" style="background-image: url('{% if object %}{{ object.cover_img }}{% else %}{% static 'img/ub.jpg' %}{% endif %}');"></div>
+
+  <div class="main main-raised">
+    <div class="profile-content">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-6 col-xs-offset-3">
+            <div class="profile">
+              <div class="avatar">
+                {% if object %}
+                <img src="{{ object.profile_img }}" alt="Circle Image" class="img-circle img-responsive img-raised"/>
+                {% else %}
+                <img src="{% static 'img/default-avatar.png' %}" alt="Circle Image" class="img-circle img-responsive img-raised"/>
+                {% endif %}
+              </div>
+              <div class="name">
+                <h3 class="title">{{ object.user.last_name }} {{ object.user.first_name }}</h3>
+                <h6>{{ object.career|default:"" }}</h6>
+                {% if object.facebook %}
+                <a href="{{ object.facebook }}" class="btn btn-just-icon btn-simple btn-facebook">
+                  <i class="fa fa-facebook-square"></i>
+                </a>
+                {% endif %}
+                {% if object.twitter %}
+                <a href="{{ object.twitter }}" class="btn btn-just-icon btn-simple btn-twitter">
+                  <i class="fa fa-twitter"></i>
+                </a>
+                {% endif %}
+                {% if object.google %}
+                <a href="{{ object.google }}" class="btn btn-just-icon btn-simple btn-google">
+                  <i class="fa fa-google"></i>
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% if object.user == user %}
+          <div class="col-xs-2 follow">
+            <a href="javascript:;" data-url="{% url 'authenticate-edit' object.id %}" class="btn btn-fab btn-primary load" rel="tooltip" title="{% trans 'Change' %}">
+              <i class="material-icons">create</i>
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="description text-center">
+        <p>{{ object.about_me|default:"" }}</p>
+      </div>
+      {% if object.user == user %}
+      <div class="row" id="scrollTop">
+        <div class="col-md-12">
+          <div class="profile-tabs">
+            <div class="nav-align-center">
+              <ul class="nav nav-pills" role="tablist">
+                <li class="{% if type != 'saved' %}active{% endif %}">
+                  <a href="{% url 'authenticate-profile' object.id %}?type=my">
+                    <i class="material-icons">backup</i>
+                    {% trans 'My ads' %}
+                  </a>
+                </li>
+                <li class="{% if type == 'saved' %}active{% endif %}">
+                  <a href="{% url 'authenticate-profile' object.id %}?type=saved">
+                    <i class="material-icons">save</i>
+                    {% trans 'Saved ads' %}
+                  </a>
+                </li>
+              </ul>
+
+              <div class="tab-content">
+                <div class="tab-pane active">
+                  <div class="row">
+                    <div id="newItems" class="container">
+                      {% include 'advertisement/ui/ads.html' %}
+                    </div>
+                  </div>
+                  {% if object_list.has_next %}
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="text-center">
+                        <button id="loadmore" class="btn btn-primary btn-sm">{% trans 'load more' %}</button>
+                      </div>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <div class="space-50"></div>
+  </div>
+  {% include 'app/ui/footer.html' %}
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    {% if type %}
+    $('html,body').animate({scrollTop: $('#scrollTop').offset().top-30}, 800);
+    {% endif %}
+
+    $('#loadmore').click(function(){
+      loadItems();
+    });
+
+    {% if not object_list.has_next %}
+    $( "#loadmore" ).hide();
+    {% endif %}
+
+  });
+
+  var pageNum = 1;
+  var counter = 3;
+  var hasNextPage = true;
+
+  var loadItems = function() {
+
+    if (hasNextPage === false) {
+      return false
+    }
+
+    pageNum = pageNum + 1;
+
+    $.ajax({
+      url : '',
+      data : {page : pageNum},
+      //dataType : 'json',
+      success : function(data){
+        hasNextPage = true;
+        $('#newItems').append(data);
+
+      },
+      error : function(data) {
+        hasNextPage = false;
+      },
+    });
+  };
+</script>
+{% endblock %}
